@@ -92,23 +92,26 @@ class HomeScreen extends StatelessWidget {
         crossAxisCount: 2, // Количество колонок
         crossAxisSpacing: 10.0,
         mainAxisSpacing: 10.0,
-        childAspectRatio: 0.75, // Изменение пропорций карточки
+        childAspectRatio: 1.0, // Сделаем карточки квадратными
       ),
       itemCount: mangaList.length,
       itemBuilder: (context, index) {
         final manga = mangaList[index];
         return Card(
-          color: manga['image'] == '' ? Colors.grey : null, // Серый цвет, если нет изображения
+          color: manga['image'] == '' ? Colors.grey : null, // Если изображения нет, серый фон
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Если есть изображение, показываем его
               manga['image'] != ''
-                  ? AspectRatio(
-                      aspectRatio: 1, // Подстраиваем изображение к квадратной карточке
+                  ? Flexible(
                       child: Image.asset(manga['image']!, fit: BoxFit.cover),
                     )
-                  : Container(height: 80, color: Colors.grey), // Серый контейнер, если нет изображения
+                  : const Expanded(
+                      child: Center(
+                        child: Icon(Icons.image, color: Colors.white), // Иконка, если нет изображения
+                      ),
+                    ),
               const SizedBox(height: 10),
               Text(
                 manga['name']!,
