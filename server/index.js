@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Подключаемся к MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/manga_reader', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://ATAIST:co8RSZBC1h24thvk@manga.sw049.mongodb.net/manga?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true, serverSelectionTimeoutMS: 5000})
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.log(err));
 
