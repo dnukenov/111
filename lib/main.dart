@@ -94,7 +94,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisCount: 4, // 4 cards per row
           crossAxisSpacing: 3.0,
           mainAxisSpacing: 3.0,
-          childAspectRatio: 0.5, // Smaller cards
+          childAspectRatio: 0.5,
         ),
         itemCount: mangaList.length,
         itemBuilder: (context, index) {
@@ -114,7 +114,7 @@ class HomeScreen extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    'assets/manga/${manga['folder']}/cover.jpg', // Cover image
+                    'assets/manga/${manga['folder']}/cover.jpg',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -171,6 +171,7 @@ class MangaReaderScreen extends StatefulWidget {
 
 class _MangaReaderScreenState extends State<MangaReaderScreen> {
   List<String> pages = [];
+  int currentPage = 0;
 
   @override
   void initState() {
@@ -181,7 +182,6 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
   Future<void> _loadMangaPages() async {
     String mangaPath = 'assets/manga/${widget.folderName}';
 
-    // Generate a list of possible image file names (page_1.jpg, page_2.jpg, etc.)
     List<String> possiblePages = List.generate(20, (index) => '$mangaPath/page_${index + 1}.jpg');
 
     setState(() {
@@ -189,22 +189,60 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
     });
   }
 
+  void _goToNextPage() {
+    if (currentPage < pages.length - 1) {
+      setState(() {
+        currentPage++;
+      });
+    }
+  }
+
+  void _goToPreviousPage() {
+    if (currentPage > 0) {
+      setState(() {
+        currentPage--;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.mangaName)),
+      appBar: AppBar(title: Text('${widget.mangaName} - Page ${currentPage + 1}')),
       body: pages.isNotEmpty
-          ? PageView.builder(
-        itemCount: pages.length,
-        itemBuilder: (context, index) {
-          return Image.asset(
-            pages[index],
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              return const Center(child: Text('Изображение не найдено'));
-            },
-          );
+          ? GestureDetector(
+        onTapUp: (details) {
+          double screenWidth = MediaQuery.of(context).size.width;
+          if (details.globalPosition.dx > screenWidth / 2) {
+            _goToNextPage(); // Tap Right → Next Page
+          } else {
+            _goToPreviousPage(); // Tap Left → Previous Page
+          }
         },
+        child: Stack(
+          children: [
+            Center(
+              child: Image.asset(
+                pages[currentPage],
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(child: Text('Изображение не найдено'));
+                },
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Text(
+                  'Page ${currentPage + 1} of ${pages.length}',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
       )
           : const Center(child: CircularProgressIndicator()),
     );
