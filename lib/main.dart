@@ -75,26 +75,26 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> mangaList = [
-      {'name': 'Naruto', 'image': 'assets/manga/naruto/Naruto.jpg'},
-      {'name': 'One Piece', 'image': 'assets/manga/one_piece/op.jpg'},
-      {'name': 'Attack on Titan', 'image': 'assets/manga/aot/aot.jpg'},
-      {'name': 'Demon Slayer', 'image': 'assets/manga/demon_slayer/dem_.jpg'},
-      {'name': 'Dragon Ball', 'image': 'assets/manga/dbz/drb.jpg'},
-      {'name': 'Tokyo Ghoul', 'image': 'assets/manga/tokyo_ghoul/tg.jpg'},
-      {'name': 'Death Note', 'image': 'assets/manga/death_note/dth.jpg'},
-      {'name': 'Bleach', 'image': 'assets/manga/bleach/bl.jpg'},
-      {'name': 'Jujutsu Kaisen', 'image': 'assets/manga/jjk/jk.jpg'},
-      {'name': 'Hunter x Hunter', 'image': 'assets/manga/hxh/hxh.jpg'},
+      {'name': 'Naruto', 'folder': 'naruto'},
+      {'name': 'One Piece', 'folder': 'one_piece'},
+      {'name': 'Attack on Titan', 'folder': 'aot'},
+      {'name': 'Demon Slayer', 'folder': 'demon_slayer'},
+      {'name': 'Dragon Ball', 'folder': 'dbz'},
+      {'name': 'Tokyo Ghoul', 'folder': 'tokyo_ghoul'},
+      {'name': 'Death Note', 'folder': 'death_note'},
+      {'name': 'Bleach', 'folder': 'bleach'},
+      {'name': 'Jujutsu Kaisen', 'folder': 'jjk'},
+      {'name': 'Hunter x Hunter', 'folder': 'hxh'},
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(4.0), // Минимальный отступ
+      padding: const EdgeInsets.all(4.0),
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4, // Теперь 4 карточки в ряд
-          crossAxisSpacing: 3.0, // Минимальные отступы
+          crossAxisCount: 4, // 4 cards per row
+          crossAxisSpacing: 3.0,
           mainAxisSpacing: 3.0,
-          childAspectRatio: 0.5, // Карточки стали ещё меньше
+          childAspectRatio: 0.5, // Smaller cards
         ),
         itemCount: mangaList.length,
         itemBuilder: (context, index) {
@@ -104,18 +104,18 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MangaReaderScreen(mangaName: manga['name']!),
+                  builder: (context) => MangaReaderScreen(mangaName: manga['name']!, folderName: manga['folder']!),
                 ),
               );
             },
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(5), // Округлённые углы
+              borderRadius: BorderRadius.circular(5),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    manga['image']!,
-                    fit: BoxFit.cover, // Теперь изображение полностью покрывает карточку
+                    'assets/manga/${manga['folder']}/cover.jpg', // Cover image
+                    fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         color: Colors.grey[300],
@@ -126,11 +126,11 @@ class HomeScreen extends StatelessWidget {
                   Container(
                     alignment: Alignment.bottomCenter,
                     padding: const EdgeInsets.all(2),
-                    color: Colors.black54, // Затемнённый фон под текст
+                    color: Colors.black54,
                     child: Text(
                       manga['name']!,
                       style: const TextStyle(
-                        fontSize: 8, // Минимальный шрифт
+                        fontSize: 8,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -149,9 +149,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-
-
-
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({Key? key}) : super(key: key);
 
@@ -165,29 +162,39 @@ class FavoritesScreen extends StatelessWidget {
 
 class MangaReaderScreen extends StatefulWidget {
   final String mangaName;
-  const MangaReaderScreen({Key? key, required this.mangaName}) : super(key: key);
+  final String folderName;
+  const MangaReaderScreen({Key? key, required this.mangaName, required this.folderName}) : super(key: key);
 
   @override
   _MangaReaderScreenState createState() => _MangaReaderScreenState();
 }
 
 class _MangaReaderScreenState extends State<MangaReaderScreen> {
-  late List<String> pages;
+  List<String> pages = [];
 
   @override
   void initState() {
     super.initState();
-    pages = List.generate(
-      10, // Предполагаем 10 страниц на мангу
-          (index) => 'assets/manga/${widget.mangaName}/page_${index + 1}.jpg',
-    );
+    _loadMangaPages();
+  }
+
+  Future<void> _loadMangaPages() async {
+    String mangaPath = 'assets/manga/${widget.folderName}';
+
+    // Generate a list of possible image file names (page_1.jpg, page_2.jpg, etc.)
+    List<String> possiblePages = List.generate(20, (index) => '$mangaPath/page_${index + 1}.jpg');
+
+    setState(() {
+      pages = possiblePages;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.mangaName)),
-      body: PageView.builder(
+      body: pages.isNotEmpty
+          ? PageView.builder(
         itemCount: pages.length,
         itemBuilder: (context, index) {
           return Image.asset(
@@ -198,7 +205,8 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
             },
           );
         },
-      ),
+      )
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }

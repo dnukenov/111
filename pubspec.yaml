@@ -58,16 +58,16 @@ flutter:
   uses-material-design: true
   assets:
     - assets/avatar.png
-    - assets/manga/aot/aot.jpg
-    - assets/manga/tokyo_ghoul/tg.jpg
-    - assets/manga/bleach/bl.jpg
-    - assets/manga/one_piece/op.jpg
-    - assets/manga/dbz/drb.jpg
-    - assets/manga/hxh/hxh.jpg
-    - assets/manga/naruto/Naruto.jpg
-    - assets/manga/demon_slayer/dem_.jpg
-    - assets/manga/death_note/dth.jpg
-    - assets/manga/jjk/jk.jpg
+    - assets/manga/aot/
+    - assets/manga/tokyo_ghoul/
+    - assets/manga/bleach/
+    - assets/manga/one_piece/
+    - assets/manga/dbz/
+    - assets/manga/hxh/
+    - assets/manga/naruto/
+    - assets/manga/demon_slayer/
+    - assets/manga/death_note/
+    - assets/manga/jjk/
 
 
   # To add assets to your application, add an assets section, like this:
