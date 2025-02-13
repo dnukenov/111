@@ -59,6 +59,15 @@ flutter:
   assets:
     - assets/avatar.png
     - assets/manga/aot.jpg
+    - assets/manga/tg.jpg
+    - assets/manga/bl.jpg
+    - assets/manga/op.jpg
+    - assets/manga/drb.jpg
+    - assets/manga/hxh.jpg
+    - assets/manga/Naruto.jpg
+    - assets/manga/dem_.jpg
+    - assets/manga/dth.jpg
+    - assets/manga/jk.jpg
 
 
   # To add assets to your application, add an assets section, like this:

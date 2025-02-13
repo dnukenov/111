@@ -74,21 +74,48 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> mangaList = [
-      'Naruto', 'One Piece', 'Attack on Titan', 'Demon Slayer',
-      'Dragon Ball', 'Tokyo Ghoul', 'Death Note', 'Bleach',
-      'Jujutsu Kaisen', 'Hunter x Hunter'
+    final List<Map<String, String>> mangaList = [
+      {'name': 'Naruto', 'image': 'assets/manga/Naruto.jpg'},
+      {'name': 'One Piece', 'image': 'assets/manga/op.jpg'},
+      {'name': 'Attack on Titan', 'image': 'assets/manga/aot.jpg'},
+      {'name': 'Demon Slayer', 'image': 'assets/manga/dem_.jpg'},
+      {'name': 'Dragon Ball', 'image': 'assets/manga/drb.jpg'},
+      {'name': 'Tokyo Ghoul', 'image': 'assets/manga/tg.jpg'},
+      {'name': 'Death Note', 'image': 'assets/manga/dth.jpg'},
+      {'name': 'Bleach', 'image': 'assets/manga/bl.jpg'},
+      {'name': 'Jujutsu Kaisen', 'image': 'assets/manga/jk.jpg'},
+      {'name': 'Hunter x Hunter', 'image': 'assets/manga/hxh.jpg'},
     ];
 
-    return ListView.builder(
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // Количество колонок
+        crossAxisSpacing: 10.0,
+        mainAxisSpacing: 10.0,
+        childAspectRatio: 0.75, // Изменение пропорций карточки
+      ),
       itemCount: mangaList.length,
       itemBuilder: (context, index) {
+        final manga = mangaList[index];
         return Card(
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: ListTile(
-            title: Text(mangaList[index], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {},
+          color: manga['image'] == '' ? Colors.grey : null, // Серый цвет, если нет изображения
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Если есть изображение, показываем его
+              manga['image'] != ''
+                  ? AspectRatio(
+                      aspectRatio: 1, // Подстраиваем изображение к квадратной карточке
+                      child: Image.asset(manga['image']!, fit: BoxFit.cover),
+                    )
+                  : Container(height: 80, color: Colors.grey), // Серый контейнер, если нет изображения
+              const SizedBox(height: 10),
+              Text(
+                manga['name']!,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // Меньший размер шрифта
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         );
       },
