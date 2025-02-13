@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +30,7 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen> {
   int _selectedIndex = 1;
-  final List<Widget> _pages = [const ProfileScreen(), const HomeScreen(), const FavoritesScreen()];
+  final List<Widget> _pages = [const ProfileScreen(), const HomeScreen()];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -249,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +271,7 @@ class HomeScreen extends StatelessWidget {
       padding: const EdgeInsets.all(4.0),
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4, // 4 cards per row
+          crossAxisCount: 4,
           crossAxisSpacing: 3.0,
           mainAxisSpacing: 3.0,
           childAspectRatio: 0.5,
@@ -328,18 +329,11 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class FavoritesScreen extends StatelessWidget {
-  const FavoritesScreen({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Избранные манги'));
-  }
-}
 class MangaReaderScreen extends StatefulWidget {
   final String mangaName;
   final String folderName;
-  const MangaReaderScreen({Key? key, required this.mangaName, required this.folderName}) : super(key: key);
+  const MangaReaderScreen({super.key, required this.mangaName, required this.folderName});
 
   @override
   _MangaReaderScreenState createState() => _MangaReaderScreenState();
@@ -356,9 +350,15 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
   }
 
   Future<void> _loadMangaPages() async {
-    String mangaPath = 'assets/manga/${widget.folderName}';
+    String mangaPath = 'assets/manga/${widget.folderName}/';
+    final manifestContent = await rootBundle.loadString('AssetManifest.json');
+    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
-    List<String> possiblePages = List.generate(20, (index) => '$mangaPath/page_${index + 1}.jpg');
+    List<String> possiblePages = manifestMap.keys
+        .where((path) => path.startsWith(mangaPath) && path.endsWith('.jpg'))
+        .toList();
+
+    possiblePages.sort();
 
     setState(() {
       pages = possiblePages;
@@ -384,43 +384,33 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.mangaName} - Page ${currentPage + 1}')),
-      body: pages.isNotEmpty
-          ? GestureDetector(
-              onTapUp: (details) {
-                double screenWidth = MediaQuery.of(context).size.width;
-                if (details.globalPosition.dx > screenWidth / 2) {
-                  _goToNextPage(); // Tap Right → Next Page
-                } else {
-                  _goToPreviousPage(); // Tap Left → Previous Page
-                }
-              },
-              child: Stack(
-                children: [
-                  Center(
-                    child: Image.asset(
-                      pages[currentPage],
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(child: Text('Изображение не найдено'));
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Text(
-                        'Page ${currentPage + 1} of ${pages.length}',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
+      appBar: AppBar(title: Text(widget.mangaName)),
+      body: pages.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+        children: [
+          Expanded(
+            child: Image.asset(
+              pages[currentPage],
+              fit: BoxFit.contain,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: _goToPreviousPage,
               ),
-            )
-          : const Center(child: CircularProgressIndicator()),
+              Text("${currentPage + 1}/${pages.length}"),
+              IconButton(
+                icon: const Icon(Icons.arrow_forward),
+                onPressed: _goToNextPage,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
