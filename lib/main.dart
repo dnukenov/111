@@ -336,7 +336,6 @@ class FavoritesScreen extends StatelessWidget {
     return const Center(child: Text('Избранные манги'));
   }
 }
-
 class MangaReaderScreen extends StatefulWidget {
   final String mangaName;
   final String folderName;

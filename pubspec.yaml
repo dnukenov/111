@@ -67,10 +67,9 @@ flutter:
     - assets/manga/demon_slayer/
     - assets/manga/hxh/
     - assets/manga/jjk/
-    - assets/manga/naruto/
-    - assets/manga/one_piece/
-    - assets/manga/tokyo_ghoul/
-
+    - assets/manga/death_note/chapter-1/
+    - assets/manga/naruto/naruto-chapter-0/
+    - assets/manga/jjk/chapter-1/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
