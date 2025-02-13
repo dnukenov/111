@@ -75,56 +75,82 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> mangaList = [
-      {'name': 'Naruto', 'image': 'assets/manga/Naruto.jpg'},
-      {'name': 'One Piece', 'image': 'assets/manga/op.jpg'},
-      {'name': 'Attack on Titan', 'image': 'assets/manga/aot.jpg'},
-      {'name': 'Demon Slayer', 'image': 'assets/manga/dem_.jpg'},
-      {'name': 'Dragon Ball', 'image': 'assets/manga/drb.jpg'},
-      {'name': 'Tokyo Ghoul', 'image': 'assets/manga/tg.jpg'},
-      {'name': 'Death Note', 'image': 'assets/manga/dth.jpg'},
-      {'name': 'Bleach', 'image': 'assets/manga/bl.jpg'},
-      {'name': 'Jujutsu Kaisen', 'image': 'assets/manga/jk.jpg'},
-      {'name': 'Hunter x Hunter', 'image': 'assets/manga/hxh.jpg'},
+      {'name': 'Naruto', 'image': 'assets/manga/naruto/Naruto.jpg'},
+      {'name': 'One Piece', 'image': 'assets/manga/one_piece/op.jpg'},
+      {'name': 'Attack on Titan', 'image': 'assets/manga/aot/aot.jpg'},
+      {'name': 'Demon Slayer', 'image': 'assets/manga/demon_slayer/dem_.jpg'},
+      {'name': 'Dragon Ball', 'image': 'assets/manga/dbz/drb.jpg'},
+      {'name': 'Tokyo Ghoul', 'image': 'assets/manga/tokyo_ghoul/tg.jpg'},
+      {'name': 'Death Note', 'image': 'assets/manga/death_note/dth.jpg'},
+      {'name': 'Bleach', 'image': 'assets/manga/bleach/bl.jpg'},
+      {'name': 'Jujutsu Kaisen', 'image': 'assets/manga/jjk/jk.jpg'},
+      {'name': 'Hunter x Hunter', 'image': 'assets/manga/hxh/hxh.jpg'},
     ];
 
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Количество колонок
-        crossAxisSpacing: 10.0,
-        mainAxisSpacing: 10.0,
-        childAspectRatio: 1.0, // Сделаем карточки квадратными
-      ),
-      itemCount: mangaList.length,
-      itemBuilder: (context, index) {
-        final manga = mangaList[index];
-        return Card(
-          color: manga['image'] == '' ? Colors.grey : null, // Если изображения нет, серый фон
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Если есть изображение, показываем его
-              manga['image'] != ''
-                  ? Flexible(
-                      child: Image.asset(manga['image']!, fit: BoxFit.cover),
-                    )
-                  : const Expanded(
-                      child: Center(
-                        child: Icon(Icons.image, color: Colors.white), // Иконка, если нет изображения
+    return Padding(
+      padding: const EdgeInsets.all(4.0), // Минимальный отступ
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4, // Теперь 4 карточки в ряд
+          crossAxisSpacing: 3.0, // Минимальные отступы
+          mainAxisSpacing: 3.0,
+          childAspectRatio: 0.5, // Карточки стали ещё меньше
+        ),
+        itemCount: mangaList.length,
+        itemBuilder: (context, index) {
+          final manga = mangaList[index];
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MangaReaderScreen(mangaName: manga['name']!),
+                ),
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5), // Округлённые углы
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    manga['image']!,
+                    fit: BoxFit.cover, // Теперь изображение полностью покрывает карточку
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Center(child: Icon(Icons.broken_image, size: 20)),
+                      );
+                    },
+                  ),
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    padding: const EdgeInsets.all(2),
+                    color: Colors.black54, // Затемнённый фон под текст
+                    child: Text(
+                      manga['name']!,
+                      style: const TextStyle(
+                        fontSize: 8, // Минимальный шрифт
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-              const SizedBox(height: 10),
-              Text(
-                manga['name']!,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // Меньший размер шрифта
-                textAlign: TextAlign.center,
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 }
+
+
+
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({Key? key}) : super(key: key);
@@ -133,6 +159,46 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Text('Избранные манги', style: TextStyle(fontSize: 20)),
+    );
+  }
+}
+
+class MangaReaderScreen extends StatefulWidget {
+  final String mangaName;
+  const MangaReaderScreen({Key? key, required this.mangaName}) : super(key: key);
+
+  @override
+  _MangaReaderScreenState createState() => _MangaReaderScreenState();
+}
+
+class _MangaReaderScreenState extends State<MangaReaderScreen> {
+  late List<String> pages;
+
+  @override
+  void initState() {
+    super.initState();
+    pages = List.generate(
+      10, // Предполагаем 10 страниц на мангу
+          (index) => 'assets/manga/${widget.mangaName}/page_${index + 1}.jpg',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.mangaName)),
+      body: PageView.builder(
+        itemCount: pages.length,
+        itemBuilder: (context, index) {
+          return Image.asset(
+            pages[index],
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return const Center(child: Text('Изображение не найдено'));
+            },
+          );
+        },
+      ),
     );
   }
 }
