@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ^2.0.0
+  http: ^0.13.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -58,16 +60,16 @@ flutter:
   uses-material-design: true
   assets:
     - assets/avatar.png
-    - assets/manga/aot/aot.jpg
-    - assets/manga/tg.jpg
-    - assets/manga/bl.jpg
-    - assets/manga/op.jpg
-    - assets/manga/drb.jpg
-    - assets/manga/hxh.jpg
-    - assets/manga/Naruto.jpg
-    - assets/manga/dem_.jpg
-    - assets/manga/dth.jpg
-    - assets/manga/jk.jpg
+    - assets/manga/aot/
+    - assets/manga/bleach/
+    - assets/manga/dbz/
+    - assets/manga/death_note/
+    - assets/manga/demon_slayer/
+    - assets/manga/hxh/
+    - assets/manga/jjk/
+    - assets/manga/naruto/
+    - assets/manga/one_piece/
+    - assets/manga/tokyo_ghoul/
 
 
   # To add assets to your application, add an assets section, like this:
