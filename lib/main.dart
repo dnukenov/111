@@ -77,7 +77,7 @@ class HomeScreen extends StatelessWidget {
     final List<Map<String, String>> mangaList = [
       {'name': 'Naruto', 'image': 'assets/manga/Naruto.jpg'},
       {'name': 'One Piece', 'image': 'assets/manga/op.jpg'},
-      {'name': 'Attack on Titan', 'image': 'assets/manga/aot.jpg'},
+      {'name': 'Attack on Titan', 'image': 'assets/manga/aot/aot.jpg'},
       {'name': 'Demon Slayer', 'image': 'assets/manga/dem_.jpg'},
       {'name': 'Dragon Ball', 'image': 'assets/manga/drb.jpg'},
       {'name': 'Tokyo Ghoul', 'image': 'assets/manga/tg.jpg'},
