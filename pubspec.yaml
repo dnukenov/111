@@ -74,6 +74,9 @@ flutter:
     - assets/manga/naruto/naruto-chapter-0/
     - assets/manga/jjk/chapter-1/
     - assets/manga/aot/chapter-1/
+    - assets/manga/bleach/chapter-1/
+    - assets/manga/one_piece/chapter-1/
+    - assets/manga/hxh/chapter-1/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
