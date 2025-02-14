@@ -29,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     MangaModel(name: 'Jujutsu Kaisen', folder: 'jjk'),
     MangaModel(name: 'Hunter x Hunter', folder: 'hxh'),
     MangaModel(name: 'Death Note', folder: 'death_note'),
+    MangaModel(name: 'Tokyo Ghoul', folder: 'tokyo_ghoul'),
 
     // Manhua (Chinese)
     MangaModel(name: 'The King\'s Avatar', folder: 'kings_avatar'),
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   List<MangaModel> filterManga(String category) {
     switch (category) {
       case 'Manga':
-        return mangaList.where((manga) => ['naruto', 'one_piece', 'aot', 'demon_slayer', 'dbz', 'bleach', 'jjk', 'hxh', 'death_note'].contains(manga.folder)).toList();
+        return mangaList.where((manga) => ['naruto', 'one_piece', 'aot', 'demon_slayer', 'dbz', 'bleach', 'jjk', 'hxh', 'death_note', 'tokyo_ghoul'].contains(manga.folder)).toList();
       case 'Manhua':
         return mangaList.where((manga) => ['kings_avatar', 'tdg', 'btth', 'soul_land', 'martial_peak'].contains(manga.folder)).toList();
       case 'Manhwa':
