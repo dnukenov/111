@@ -2,24 +2,89 @@ import 'package:flutter/material.dart';
 import '../models/manga_model.dart';
 import 'manga_reader_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<MangaModel> mangaList = [
-      MangaModel(name: 'Naruto', folder: 'naruto'),
-      MangaModel(name: 'One Piece', folder: 'one_piece'),
-      MangaModel(name: 'Attack on Titan', folder: 'aot'),
-      MangaModel(name: 'Demon Slayer', folder: 'demon_slayer'),
-      MangaModel(name: 'Dragon Ball', folder: 'dbz'),
-      MangaModel(name: 'Tokyo Ghoul', folder: 'tokyo_ghoul'),
-      MangaModel(name: 'Death Note', folder: 'death_note'),
-      MangaModel(name: 'Bleach', folder: 'bleach'),
-      MangaModel(name: 'Jujutsu Kaisen', folder: 'jjk'),
-      MangaModel(name: 'Hunter x Hunter', folder: 'hxh'),
-    ];
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  final List<MangaModel> mangaList = [
+    // Manga (Japanese)
+    MangaModel(name: 'Naruto', folder: 'naruto'),
+    MangaModel(name: 'One Piece', folder: 'one_piece'),
+    MangaModel(name: 'Attack on Titan', folder: 'aot'),
+    MangaModel(name: 'Demon Slayer', folder: 'demon_slayer'),
+    MangaModel(name: 'Dragon Ball', folder: 'dbz'),
+    MangaModel(name: 'Bleach', folder: 'bleach'),
+    MangaModel(name: 'Jujutsu Kaisen', folder: 'jjk'),
+    MangaModel(name: 'Hunter x Hunter', folder: 'hxh'),
+    MangaModel(name: 'Death Note', folder: 'death_note'),
+
+    // Manhua (Chinese)
+    MangaModel(name: 'The King\'s Avatar', folder: 'kings_avatar'),
+    MangaModel(name: 'Tales of Demons and Gods', folder: 'tdg'),
+    MangaModel(name: 'Battle Through the Heavens', folder: 'btth'),
+    MangaModel(name: 'Soul Land', folder: 'soul_land'),
+    MangaModel(name: 'Martial Peak', folder: 'martial_peak'),
+
+    // Manhwa (Korean)
+    MangaModel(name: 'Solo Leveling', folder: 'solo_leveling'),
+    MangaModel(name: 'The Beginning After The End', folder: 'tbate'),
+    MangaModel(name: 'Tower of God', folder: 'tower_of_god'),
+    MangaModel(name: 'Noblesse', folder: 'noblesse'),
+    MangaModel(name: 'God of High School', folder: 'gohs'),
+  ];
+
+  List<MangaModel> filterManga(String category) {
+    switch (category) {
+      case 'Manga':
+        return mangaList.where((manga) => ['naruto', 'one_piece', 'aot', 'demon_slayer', 'dbz', 'bleach', 'jjk', 'hxh', 'death_note'].contains(manga.folder)).toList();
+      case 'Manhua':
+        return mangaList.where((manga) => ['kings_avatar', 'tdg', 'btth', 'soul_land', 'martial_peak'].contains(manga.folder)).toList();
+      case 'Manhwa':
+        return mangaList.where((manga) => ['solo_leveling', 'tbate', 'tower_of_god', 'noblesse', 'gohs'].contains(manga.folder)).toList();
+      default:
+        return [];
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: 'Manga'),
+            Tab(text: 'Manhua'),
+            Tab(text: 'Manhwa'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildMangaGrid(filterManga('Manga')),
+              _buildMangaGrid(filterManga('Manhua')),
+              _buildMangaGrid(filterManga('Manhwa')),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMangaGrid(List<MangaModel> mangaList) {
     return GridView.builder(
       padding: const EdgeInsets.all(4.0),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
