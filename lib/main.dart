@@ -293,6 +293,7 @@ class HomeScreen extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
+                  /////////////////////////////////////////////////////// HERE IS
                   Image.asset(
                     'assets/manga/${manga['folder']}/cover.jpg',
                     fit: BoxFit.cover,
