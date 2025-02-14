@@ -1,3 +1,4 @@
+
 class MangaModel {
   final String name;
   final String folder;

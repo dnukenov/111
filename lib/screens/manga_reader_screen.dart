@@ -22,8 +22,12 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
   }
 
   Future<void> _loadMangaPages() async {
-    pages = await MangaService.loadMangaPages(widget.folderName);
-    setState(() {});
+    try {
+      pages = await MangaService.loadMangaPages(widget.folderName);
+      setState(() {});
+    } catch (e) {
+      print("Error loading manga pages: $e");
+    }
   }
 
   void _goToNextPage() {
@@ -48,29 +52,45 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
       appBar: AppBar(title: Text(widget.mangaName)),
       body: pages.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          Expanded(
-            child: Image.asset(
-              pages[currentPage],
-              fit: BoxFit.contain,
+          : GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity! < 0) {
+            _goToNextPage(); // Swipe left to go forward
+          } else if (details.primaryVelocity! > 0) {
+            _goToPreviousPage(); // Swipe right to go back
+          }
+        },
+        child: Column(
+          children: [
+            Expanded(
+              child: Image.network(
+                pages[currentPage],
+                fit: BoxFit.contain,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(child: CircularProgressIndicator());
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(child: Icon(Icons.broken_image, size: 50));
+                },
+              ),
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: _goToPreviousPage,
-              ),
-              Text("${currentPage + 1}/${pages.length}"),
-              IconButton(
-                icon: const Icon(Icons.arrow_forward),
-                onPressed: _goToNextPage,
-              ),
-            ],
-          ),
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: _goToPreviousPage,
+                ),
+                Text("${currentPage + 1}/${pages.length}"),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: _goToNextPage,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
