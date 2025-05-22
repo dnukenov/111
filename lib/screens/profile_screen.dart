@@ -41,8 +41,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               TextField(controller: _passwordController, obscureText: true, decoration: const InputDecoration(labelText: 'Password')),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  _isLoginMode ? AuthService.login(_usernameController.text, _passwordController.text) : AuthService.register(_usernameController.text, _passwordController.text);
+                onPressed: () async {
+                  try {
+                    if (_isLoginMode) {
+                      await AuthService.login(_usernameController.text, _passwordController.text);
+                    } else {
+                      await AuthService.register(_usernameController.text, _passwordController.text);
+                    }
+
+                    await _checkIfLoggedIn(); // ✅ refresh state
+                  } catch (e) {
+                    // Handle error (e.g., show snackbar or alert)
+                    print('Error: $e');
+                  }
                 },
                 child: Text(_isLoginMode ? 'Login' : 'Register'),
               ),
@@ -54,7 +65,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const CircleAvatar(radius: 50, backgroundImage: AssetImage('assets/avatar.png')),
               Text(_storedUsername!, style: const TextStyle(fontSize: 20)),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: AuthService.logout, child: const Text('Logout')),
+              ElevatedButton(
+                onPressed: () async {
+                  await AuthService.logout();
+                  await _checkIfLoggedIn(); // <- updates UI by clearing _storedUsername
+                },
+                child: const Text('Logout'),
+              ),
             ],
           ],
         ),
